@@ -17,92 +17,46 @@ class Images(object):
     decorations_list = ("barrel2", "table", "plant", "balloon")
     
     def __init__(self):
-        self.wall_vert_nodoor = ImageTk.PhotoImage(Image.open("./resources/wall_vertical_nodoor2.png"))
-        self.wall_vert_door = ImageTk.PhotoImage(Image.open("./resources/wall_vertical_door2.png"))
-        self.wall_horiz_nodoor = ImageTk.PhotoImage(Image.open("./resources/wall_horizontal_nodoor2.png"))
-        self.wall_horiz_door = ImageTk.PhotoImage(Image.open("./resources/wall_horizontal_door2.png"))
-        self.horiz_door = ImageTk.PhotoImage(Image.open("./resources/gates_horizontal_opened1.png"))
-        self.horiz_door_closed = ImageTk.PhotoImage(Image.open("./resources/gates_horizontal_closed1.png"))
-        self.vert_door = ImageTk.PhotoImage(Image.open("./resources/gates_vertical_opened2.png"))
-        self.vert_door_closed = ImageTk.PhotoImage(Image.open("./resources/gates_vetrical_closed2.png"))
+        self.wall_vert_nodoor = ImageTk.PhotoImage(Image.open("resources/wall_vertical_nodoor2.png"))
+        self.wall_vert_door = ImageTk.PhotoImage(Image.open("resources/wall_vertical_door2.png"))
+        self.wall_horiz_nodoor = ImageTk.PhotoImage(Image.open("resources/wall_horizontal_nodoor2.png"))
+        self.wall_horiz_door = ImageTk.PhotoImage(Image.open("resources/wall_horizontal_door2.png"))
+        self.horiz_door = ImageTk.PhotoImage(Image.open("resources/gates_horizontal_opened1.png"))
+        self.horiz_door_closed = ImageTk.PhotoImage(Image.open("resources/gates_horizontal_closed1.png"))
+        self.vert_door = ImageTk.PhotoImage(Image.open("resources/gates_vertical_opened2.png"))
+        self.vert_door_closed = ImageTk.PhotoImage(Image.open("resources/gates_vetrical_closed2.png"))
         
-        self.black180 = ImageTk.PhotoImage(Image.open("./resources/black180.png"))
-        self.black150 = ImageTk.PhotoImage(Image.open("./resources/black150.png"))
+        self.black180 = ImageTk.PhotoImage(Image.open("resources/black180.png"))
+        self.black150 = ImageTk.PhotoImage(Image.open("resources/black150.png"))
         
-        self.player = ImageTk.PhotoImage(Image.open("./resources/Hero.png"))
-        
-        
-        self.decorations_images = {}
-        self.pil_decorations_images = {}
-        self.map_decorations_images = {}
-        for i in self.decorations_list:
-            self.pil_decorations_images[i] = Image.open("./resources/decorations/"+i+".png")
-            self.map_items_decorations[i] = ImageTk.PhotoImage(self.pil_decorations_images[i].resize((30,30)))
-        
-        
-        self.items_images = {}
-        self.pil_items_images = {}
-        self.map_items_images = {}
-        for i in Items.items_list:
-            self.pil_items_images[i] = Image.open("./resources/items/"+i+".png")
-            self.items_images[i] = ImageTk.PhotoImage(self.pil_items_images[i].resize((60,60)))
-            self.map_items_images[i] = ImageTk.PhotoImage(self.pil_items_images[i].resize((30,30)))
-        self.map_items_images["reactor"] = ImageTk.PhotoImage(Image.open("./resources/items/reactor.png"))
-        
-        
-        self.pil_monsters_images = {}
-        self.monsters_images = {}
-        self.map_monsters_images = {}
-        for i in Monsters.monsters_list:
-            self.pil_monsters_images[i] = Image.open("./resources/monsters/"+i+".png")
-            self.monsters_images[i] = ImageTk.PhotoImage(self.pil_monsters_images[i].resize((60,60)))
-            self.map_monsters_images[i] = ImageTk.PhotoImage(self.pil_monsters_images[i].resize((30,30)))
-
-
-class Images_win(object):
-    decorations_list = ("barrel2", "table", "plant", "balloon")
-    
-    def __init__(self):
-        self.wall_vert_nodoor = ImageTk.PhotoImage(Image.open("resources\\wall_vertical_nodoor2.png"))
-        self.wall_vert_door = ImageTk.PhotoImage(Image.open("resources\\wall_vertical_door2.png"))
-        self.wall_horiz_nodoor = ImageTk.PhotoImage(Image.open("resources\\wall_horizontal_nodoor2.png"))
-        self.wall_horiz_door = ImageTk.PhotoImage(Image.open("resources\\wall_horizontal_door2.png"))
-        self.horiz_door = ImageTk.PhotoImage(Image.open("resources\\gates_horizontal_opened1.png"))
-        self.horiz_door_closed = ImageTk.PhotoImage(Image.open("resources\\gates_horizontal_closed1.png"))
-        self.vert_door = ImageTk.PhotoImage(Image.open("resources\\gates_vertical_opened2.png"))
-        self.vert_door_closed = ImageTk.PhotoImage(Image.open("resources\\gates_vetrical_closed2.png"))
-        
-        self.black180 = ImageTk.PhotoImage(Image.open("resources\\black180.png"))
-        self.black150 = ImageTk.PhotoImage(Image.open("resources\\black150.png"))
-        
-        self.player = ImageTk.PhotoImage(Image.open("resources\\Hero.png"))
+        self.player = ImageTk.PhotoImage(Image.open("resources/Hero.png"))
         
         
         self.decorations_images = {}
         self.pil_decorations_images = {}
         self.map_decorations_images = {}
         for i in self.decorations_list:
-            self.pil_decorations_images[i] = Image.open("resources\\decorations\\"+i+".png")
+            self.pil_decorations_images[i] = Image.open("resources/decorations/"+i+".png")
             self.map_decorations_images[i] = ImageTk.PhotoImage(self.pil_decorations_images[i].resize((30,30)))
-
+        
+        
         self.items_images = {}
         self.pil_items_images = {}
         self.map_items_images = {}
         for i in Items.items_list:
-            self.pil_items_images[i] = Image.open("resources\\items\\"+i+".png")
+            self.pil_items_images[i] = Image.open("resources/items/"+i+".png")
             self.items_images[i] = ImageTk.PhotoImage(self.pil_items_images[i].resize((60,60)))
             self.map_items_images[i] = ImageTk.PhotoImage(self.pil_items_images[i].resize((30,30)))
-        self.map_items_images["reactor"] = ImageTk.PhotoImage(Image.open("resources\\items\\reactor.png"))
+        self.map_items_images["reactor"] = ImageTk.PhotoImage(Image.open("resources/items/reactor.png"))
+        
         
         self.pil_monsters_images = {}
         self.monsters_images = {}
         self.map_monsters_images = {}
         for i in Monsters.monsters_list:
-            self.pil_monsters_images[i] = Image.open("resources\\monsters\\"+i+".png")
+            self.pil_monsters_images[i] = Image.open("resources/monsters/"+i+".png")
             self.monsters_images[i] = ImageTk.PhotoImage(self.pil_monsters_images[i].resize((60,60)))
             self.map_monsters_images[i] = ImageTk.PhotoImage(self.pil_monsters_images[i].resize((30,30)))
-        
-    
 
 
 class Using(object):

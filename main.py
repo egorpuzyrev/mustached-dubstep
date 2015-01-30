@@ -110,10 +110,8 @@ class New_Toplevel_1:
         self.style.map('.',background=
             [('selected', _compcolor), ('active',_ana2color)])
         master.configure(highlightcolor="black")
-        if sys.platform == "posix":
-            self.images = Images()
-        else:
-            self.images = Images_win()
+
+        self.images = Images()
         self.map_obj = map_obj
         self.player_obj = player_obj
         self.goods_obj = items_obj
@@ -201,20 +199,20 @@ class New_Toplevel_1:
         
 
         self.Canvas2 = Canvas(self.Frame1)
-        self.Canvas2.place(relx=0.03, rely=0.31)#, relheight=0.12, relwidth=0.41)
+        self.Canvas2.place(relx=0.03, rely=0.31)
         self.Canvas2.configure(background="white")
         self.Canvas2.configure(borderwidth="2")
         self.Canvas2.configure(relief=RIDGE)
         self.Canvas2.configure(selectbackground="#c4c4c4")
         self.Canvas2.configure(width=60)
         self.Canvas2.configure(height=60)
-        #~ current = self.images.items_images[self.Scrolledlistbox1.get(self.Scrolledlistbox1.curselection()[0])]
-        current = self.images.items_images['flashlight']
+        
+        current = self.images.items_images[getcursel1[1]]
         self.Canvas2.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
 
 
         self.Canvas3 = Canvas(self.Frame1)
-        self.Canvas3.place(relx=0.48, rely=0.31)#, relheight=0.12, relwidth=0.41)
+        self.Canvas3.place(relx=0.48, rely=0.31)
         self.Canvas3.configure(background="white")
         self.Canvas3.configure(borderwidth="2")
         self.Canvas3.configure(relief=RIDGE)
@@ -222,22 +220,19 @@ class New_Toplevel_1:
         self.Canvas3.configure(takefocus="0")
         self.Canvas3.configure(width=60)
         self.Canvas3.configure(height=60)
-        #~ current = self.images.items_images[self.Scrolledlistbox1.get(self.Scrolledlistbox1.curselection()[0])]
-        current = self.images.items_images['flashlight']
+        current = self.images.items_images[cursel2[1]]
         self.Canvas3.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
 
 
         self.Label1 = Label(self.Frame1)
         self.Label1.place(relx=0.14, rely=0.45, height=18, width=37)
         self.Label1.configure(activebackground="#f9f9f9")
-        #~ self.Label1.configure(text='''Label''')
         self.Label1.textvar = tk.StringVar()
         self.Label1.configure(textvariable = self.Label1.textvar)
 
         self.Label2 = Label(self.Frame1)
         self.Label2.place(relx=0.55, rely=0.45, height=18, width=37)
         self.Label2.configure(activebackground="#f9f9f9")
-        #~ self.Label2.configure(text='''Label''')
         self.Label2.textvar = tk.StringVar()
         self.Label2.configure(textvariable = self.Label2.textvar)
 
@@ -252,13 +247,8 @@ class New_Toplevel_1:
         self.Scrolledlistbox2.configure(width=10)
 
         self.Scrolledlistbox2.configure(selectmode=tk.SINGLE)
-        #~ self.Scrolledlistbox2.insert(tk.END, 'flashlight', 'cutting torch')
         for i in self.player_obj.inventory:
             self.Scrolledlistbox2.insert(tk.END, i)
-
-        #~ self.Scrolledlistbox2.listvariable = tk.StringVar()
-        #~ self.Scrolledlistbox2.listvariable.set('\n'.join(list(self.player_obj.inventory.keys())))
-        #~ self.Scrolledlistbox2.configure(listvariable=self.Scrolledlistbox2.listvariable)
 
         self.Scrolledlistbox2.configure(exportselection=0)
         self.Scrolledlistbox2.activate(0)
@@ -333,12 +323,9 @@ class New_Toplevel_1:
         
         self.Canvas1.bind("<Button-3>", lambda event: mv(event, self))
         if sys.platform == "posix":
-            #~ self.Canvas1.bind_all("<Button-4>", lambda event: on_mousewheel_up(event, self))
-            #~ self.Canvas1.bind_all("<Button-5>", lambda event: on_mousewheel_down(event, self))
             self.Canvas1.bind("<Button-4>", lambda event: on_mousewheel_up(event, self))
             self.Canvas1.bind("<Button-5>", lambda event: on_mousewheel_down(event, self))
         else:
-            #~ self.Canvas1.bind_all("<MouseWheel>", lambda event: on_mousewheel_up(event, self))
             self.Canvas1.bind("<MouseWheel>", lambda event: on_mousewheel_up(event, self))
 
         self.Canvas1.bind_all(sequence='<KeyPress-W>', func=lambda event: move_player(self, side=Const.N, dxy=(0,-1), newxy=(2,4)))
@@ -387,7 +374,6 @@ class New_Toplevel_1:
         self.Message1.configure(relief=RIDGE)
         self.Message1.configure(text='''Message''')
         self.Message1.configure(width=413)
-        #~ self.Message1.configure(height=40)
         
         self.Message1.textvar = tk.StringVar()
         self.Message1.config(textvariable=self.Message1.textvar)

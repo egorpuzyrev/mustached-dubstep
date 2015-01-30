@@ -19,26 +19,22 @@ ror = lambda val, r_bits, max_bits: \
     ((val & (2**max_bits-1)) >> r_bits%max_bits) | \
     (val << (max_bits-(r_bits%max_bits)) & (2**max_bits-1))
 
-#~ @jit
+
 def dxy(num):
     dx = (-1*(num&0b0001), 0, (num>>2)&0b0001, 0)
     dy = (0, (num>>1)&0b0001, 0, -1*((num>>3)&0b0001))
     return [(dx[i], dy[i]) for i in range(4) if not(dx[i]==dy[i])]
-
 
 def check_integrity(m):
     checked = set()
     fifo = [(0, 0),]
     while not(len(fifo)==0):
         cur_y, cur_x = fifo.pop()
-        #~ #~ print("CUR: ", cur_y, cur_x, m[cur_y][cur_x])
         d = dxy(m[cur_y][cur_x])
-        #~ #~ print("D: ", list(d))
         for i in d:
             if not(((cur_y+i[1], cur_x+i[0])) in checked or ((cur_y+i[1], cur_x+i[0])) in fifo):
                 fifo.append((cur_y+i[1], cur_x+i[0]))
         checked.add(tuple((cur_y, cur_x)))
-    #~ print("INTEGRITY CHECKED")
     return set([(y, x) for y in range(len(m)) for x in range(len(m[0]))]) - checked
         
 
