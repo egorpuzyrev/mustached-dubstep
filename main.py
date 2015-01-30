@@ -64,12 +64,12 @@ def vp_start_gui():
     w = New_Toplevel_1 (root, global_map, global_player, global_goods, global_monsters)
 
     #~ load_images()
-    draw_map(w)
-    draw_decorations(w)
-    draw_goods(w)
-    draw_monsters(w)
+    w.draw_map()
+    w.draw_decorations()
+    w.draw_goods()
+    w.draw_monsters()
     w.Canvas1.lift('player')
-    hide_map(w)
+    w.hide_map()
     w.prev_revealed = reveal(w)
     w.Frame2.after(200, lambda: iface_update(w))
 
@@ -184,13 +184,10 @@ class New_Toplevel_1:
         self.Scrolledlistbox1.configure(width=0)
         
         self.Scrolledlistbox1.configure(selectmode=tk.SINGLE)
-        #~ self.Scrolledlistbox1.insert(tk.END, 'flashlight', 'cutting torch')
+        
         for i in self.player_obj.inventory:
             self.Scrolledlistbox1.insert(tk.END, i)
         
-        #~ self.Scrolledlistbox1.listvariable = tk.StringVar()
-        #~ self.Scrolledlistbox1.listvariable.set(list(self.player_obj.inventory.keys()))
-        #~ self.Scrolledlistbox1.configure(listvariable=self.Scrolledlistbox1.listvariable)
         
         self.Scrolledlistbox1.configure(exportselection=0)
         self.Scrolledlistbox1.activate(0)
@@ -207,7 +204,7 @@ class New_Toplevel_1:
         self.Canvas2.configure(width=60)
         self.Canvas2.configure(height=60)
         
-        current = self.images.items_images[getcursel1[1]]
+        current = self.images.items_images[self.getcursel1()[1]]
         self.Canvas2.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
 
 
@@ -220,8 +217,7 @@ class New_Toplevel_1:
         self.Canvas3.configure(takefocus="0")
         self.Canvas3.configure(width=60)
         self.Canvas3.configure(height=60)
-        current = self.images.items_images[cursel2[1]]
-        self.Canvas3.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
+
 
 
         self.Label1 = Label(self.Frame1)
@@ -254,6 +250,9 @@ class New_Toplevel_1:
         self.Scrolledlistbox2.activate(0)
         self.Scrolledlistbox2.selection_set(0)
         self.Scrolledlistbox2.bind("<<ListboxSelect>>", lambda event: select_inventory2(self))
+
+        current = self.images.items_images[self.getcursel2()[1]]
+        self.Canvas3.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
 
 
         self.Labelframe1 = LabelFrame(self.Frame1)
@@ -426,8 +425,114 @@ class New_Toplevel_1:
                 foreground="#000000",
                 label="About")
 
+    def message(self, message):
+        self.Message1.messages.pop(0)
+        self.Message1.messages.append(str(message))
+        self.Message1.textvar.set('\n'.join(self.Message1.messages))
+
+    def getcursel1(self):
+        cursel1 = self.Scrolledlistbox1.curselection()
+        if cursel1:
+            item1 = self.Scrolledlistbox1.get(cursel1[0])
+            return cursel1[0], item1
+        else:
+            return None, None
+        
+    def getcursel2(self):
+        cursel2 = self.Scrolledlistbox2.curselection()
+        if cursel2:
+            item2 = self.Scrolledlistbox2.get(cursel2[0])
+            return cursel2[0], item2
+        else:
+            return None, None
+
+    def draw_map(self):
+        X = Const.X
+        Y = Const.Y
+
+        self.vertical_gates_ids = set()
+        self.horizontal_gates_ids = set()
+
+        for i in range(self.map_obj.Y*6):
+            self.Canvas1.create_line(0, i*30+Const.Y, self.map_obj.X*Const.X*6, i*30+Const.Y)
+            self.Canvas1.create_line(i*Const.X+Const.X//2, 0, i*Const.X+Const.X//2, self.map_obj.Y*Const.Y*6)    
+
+        for i in range(self.map_obj.Y):
+            for j in range(self.map_obj.X):
+                
+                if '╜' in rooms[self.map_obj.m[i][j]]:
+                    self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
+                    self.vertical_gates_ids.add(self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y*3-Y//2, image=self.images.vert_door, anchor=tk.NW, tags=('gates_vertical','gates')))
+                else:
+                    self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
+                
+                if '╙' in rooms[self.map_obj.m[i][j]]:
+                    self.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
+                else:
+                    self.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
+
+                if '╛' in rooms[self.map_obj.m[i][j]]:
+                    self.Canvas1.create_image(j*X*6, i*Y*6, image=self.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
+                else:
+                    self.Canvas1.create_image(j*X*6, i*Y*6, image=self.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
+                
+                if '╕' in rooms[self.map_obj.m[i][j]]:
+                    self.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=self.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
+                    self.horizontal_gates_ids.add(self.Canvas1.create_image(j*X*6+X*3-X//2, (i+1)*Y*6, image=self.images.horiz_door, anchor=tk.NW, tags=('gates_horizontal','gates')))
+                else:
+                    self.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=self.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
 
 
+        self.Canvas1.create_image(16, 31, image=self.images.player, anchor=tk.NW, tags=('player',))
+        
+        self.Canvas1.lift("vertical")
+        self.Canvas1.lift("gates")
+
+    def draw_decorations(self):
+        X = self.map_obj.X
+        Y = self.map_obj.Y
+
+        for i in range(Y//3):
+            for j in range(X//3):
+                key = choice(list(self.images.map_decorations_images.keys()))
+                self.Canvas1.create_image(rnd(0, X-1)*180+15+rnd(0,4)*30, rnd(0, Y-1)*180+30+rnd(0,4)*30, image=self.images.map_decorations_images[key], anchor=(tk.NW,), tags=('decoration',))
+
+    def draw_goods(self):
+        X = self.map_obj.X
+        Y = self.map_obj.Y
+        
+        self.goods_ids = set()
+        
+        for i in range(Y):
+            for j in range(X):
+                if self.goods_obj.goods_map[i][j]:
+                    item = self.goods_obj.goods_map[i][j]
+                    img = self.images.map_items_images[item['item']]
+                    self.goods_ids.add(self.Canvas1.create_image(j*180+item['coords'][0]*30+15, i*180+item['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('item',)))
+
+        self.Canvas1.lift("item")
+
+    def draw_monsters(self):
+        X = self.map_obj.X
+        Y = self.map_obj.Y
+        
+        self.monsters_ids = set()
+        
+        for i in range(Y):
+            for j in range(X):
+                if self.monsters_obj.monsters_map[i][j]:
+                    monster = self.monsters_obj.monsters_map[i][j]
+                    img = self.images.map_monsters_images[monster['monster']]
+                    newid = self.Canvas1.create_image(j*180+monster['coords'][0]*30+15, i*180+monster['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('monster',))
+                    self.monsters_obj.monsters_map[i][j]['id'] = newid
+                    self.monsters_ids.add(newid)
+        self.Canvas1.lift("monster")    
+
+    def hide_map(self):
+        self.darkness_imgs_ids = set()
+        for i in range(self.map_obj.Y):
+            for j in range(self.map_obj.X):
+                self.darkness_imgs_ids.add(self.Canvas1.create_image(i*180, j*180+15, image=self.images.black180, anchor=tk.NW, tags=('darkness',)))
 
 
 

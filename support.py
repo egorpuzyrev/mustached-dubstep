@@ -87,7 +87,7 @@ class Using(object):
 
     @staticmethod
     def use(obj):
-        _, item = getcursel1(obj)
+        _, item = obj.getcursel1(obj)
         if item in self.actions:
             pass
 
@@ -98,14 +98,14 @@ class Using(object):
         y = obj.player_obj.glob_y
 
         if obj.goods_obj.goods_map[y][x] and obj.goods_obj.goods_map[y][x]['item']=='reactor':
-            _, detail = getcursel1(obj)
+            _, detail = obj.getcursel1(obj)
             obj.player_obj.collected_details += 1
             obj.player_obj.inventory[detail] -= 1
         if obj.player_obj.collected_details == 4:
-            message(obj, "YOU ARE WINNER!!!")
-            message(obj, "YOU ARE WINNER!!!")
-            message(obj, "YOU ARE WINNER!!!")
-            message(obj, "YOU ARE WINNER!!!")
+            obj.message(obj, "YOU ARE WINNER!!!")
+            obj.message(obj, "YOU ARE WINNER!!!")
+            obj.message(obj, "YOU ARE WINNER!!!")
+            obj.message(obj, "YOU ARE WINNER!!!")
         
 
     @staticmethod
@@ -159,26 +159,26 @@ class Using(object):
 
     @staticmethod
     def use_pot(obj):
-        _, pot = getcursel1(obj)
+        _, pot = obj.getcursel1(obj)
 
-        #~ message(obj, '%s pot used' %(pot,))
+        #~ obj.message(obj, '%s pot used' %(pot,))
         obj.player_obj.inventory[pot] -= 1
         if 'health' in Items.items_properties[pot]:
             obj.player_obj.stats['health'] += Items.items_properties[pot]['health']
-            message(obj, 'Health is increased by %d' %(Items.items_properties[pot]['health'],))
+            obj.message(obj, 'Health is increased by %d' %(Items.items_properties[pot]['health'],))
         if 'agility' in Items.items_properties[pot]:
             obj.player_obj.stats['agility'] += Items.items_properties[pot]['agility']
-            message(obj, 'Agility is increased by %d' %(Items.items_properties[pot]['agility'],))
+            obj.message(obj, 'Agility is increased by %d' %(Items.items_properties[pot]['agility'],))
         if 'strength' in Items.items_properties[pot]:
             obj.player_obj.stats['strength'] += Items.items_properties[pot]['strength']
-            message(obj, 'Strength is increased by %d' %(Items.items_properties[pot]['strength'],))
+            obj.message(obj, 'Strength is increased by %d' %(Items.items_properties[pot]['strength'],))
 
     @staticmethod
     def attack(obj):
         x = obj.player_obj.glob_x
         y = obj.player_obj.glob_y
         if obj.monsters_obj.monsters_map[y][x]:
-            cursel, weapon = getcursel1(obj)
+            cursel, weapon = obj.getcursel1(obj)
             obj.player_obj.inventory[weapon] -= 1
             
             p_health = obj.player_obj.stats['health']
@@ -209,26 +209,26 @@ class Using(object):
             p_attack = int(p_mul*p_strength*(1-m_mul) + Items.items_properties[weapon]['attack'])
             m_health -= p_attack
 
-            message(obj, "Player damaged %s by %d; %s'shealths is %d" %(m_monster, p_attack, m_monster, m_health))
+            obj.message(obj, "Player damaged %s by %d; %s'shealths is %d" %(m_monster, p_attack, m_monster, m_health))
 
             m_attack = int(m_mul*m_strength*(1-p_mul))
             p_health -= m_attack
 
-            message(obj, "%s damaged player by %d" %(m_monster, m_attack))
+            obj.message(obj, "%s damaged player by %d" %(m_monster, m_attack))
             
             obj.player_obj.stats['health'] = p_health
             obj.monsters_obj.monsters_map[y][x]['health'] = m_health
 
             if p_health<=0:
-                message(obj, "Player is dead")
-                message(obj, "Player is dead")
-                message(obj, "Player is dead")
-                message(obj, "Player is dead")
+                obj.message(obj, "Player is dead")
+                obj.message(obj, "Player is dead")
+                obj.message(obj, "Player is dead")
+                obj.message(obj, "Player is dead")
                 obj.Canvas1.after(5000, exit)
 
             
             if m_health<=0:
-                message(obj, "%s is dead" %(m_monster,))
+                obj.message(obj, "%s is dead" %(m_monster,))
                 obj.monsters_obj.monsters_map[y][x] = 0
                 monster = obj.monsters_ids.intersection(obj.Canvas1.find_overlapping(x*180+15, y*180+30, x*180+180+15, y*180+180+30))
                 obj.Canvas1.delete(monster.pop())
@@ -239,116 +239,118 @@ class Using(object):
 
 
 
-def getcursel1(obj):
-    cursel1 = obj.Scrolledlistbox1.curselection()
-    if cursel1:
-        item1 = obj.Scrolledlistbox1.get(cursel1[0])
-        return cursel1[0], item1
-    else:
-        return None, None
-    
-def getcursel2(obj):
-    cursel2 = obj.Scrolledlistbox2.curselection()
-    if cursel2:
-        item2 = obj.Scrolledlistbox2.get(cursel2[0])
-        return cursel2[0], item2
-    else:
-        return None, None
+#~ def obj.getcursel1(obj):
+    #~ cursel1 = obj.Scrolledlistbox1.curselection()
+    #~ if cursel1:
+        #~ item1 = obj.Scrolledlistbox1.get(cursel1[0])
+        #~ return cursel1[0], item1
+    #~ else:
+        #~ return None, None
+    #~ 
+#~ def obj.getcursel2(obj):
+    #~ cursel2 = obj.Scrolledlistbox2.curselection()
+    #~ if cursel2:
+        #~ item2 = obj.Scrolledlistbox2.get(cursel2[0])
+        #~ return cursel2[0], item2
+    #~ else:
+        #~ return None, None
 
-def message(obj, message):
-    obj.Message1.messages.pop(0)
-    obj.Message1.messages.append(str(message))
-    obj.Message1.textvar.set('\n'.join(obj.Message1.messages))
-
-def draw_map(obj):
-    X = Const.X
-    Y = Const.Y
-
-    obj.vertical_gates_ids = set()
-    obj.horizontal_gates_ids = set()
-
-    for i in range(obj.map_obj.Y*6):
-        obj.Canvas1.create_line(0, i*30+Const.Y, obj.map_obj.X*Const.X*6, i*30+Const.Y)
-        obj.Canvas1.create_line(i*Const.X+Const.X//2, 0, i*Const.X+Const.X//2, obj.map_obj.Y*Const.Y*6)    
-
-    for i in range(obj.map_obj.Y):
-        for j in range(obj.map_obj.X):
-            
-            if '╜' in rooms[obj.map_obj.m[i][j]]:
-                obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
-                obj.vertical_gates_ids.add(obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y*3-Y//2, image=obj.images.vert_door, anchor=tk.NW, tags=('gates_vertical','gates')))
-            else:
-                obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
-            
-            if '╙' in rooms[obj.map_obj.m[i][j]]:
-                obj.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
-            else:
-                obj.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
-
-            if '╛' in rooms[obj.map_obj.m[i][j]]:
-                obj.Canvas1.create_image(j*X*6, i*Y*6, image=obj.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
-            else:
-                obj.Canvas1.create_image(j*X*6, i*Y*6, image=obj.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
-            
-            if '╕' in rooms[obj.map_obj.m[i][j]]:
-                obj.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=obj.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
-                obj.horizontal_gates_ids.add(obj.Canvas1.create_image(j*X*6+X*3-X//2, (i+1)*Y*6, image=obj.images.horiz_door, anchor=tk.NW, tags=('gates_horizontal','gates')))
-            else:
-                obj.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=obj.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
+#~ def obj.message(obj, obj.message):
+    #~ obj.Message1.obj.messages.pop(0)
+    #~ obj.Message1.obj.messages.append(str(obj.message))
+    #~ obj.Message1.textvar.set('\n'.join(obj.Message1.obj.messages))
 
 
-    obj.Canvas1.create_image(16, 31, image=obj.images.player, anchor=tk.NW, tags=('player',))
-    
-    obj.Canvas1.lift("vertical")
-    obj.Canvas1.lift("gates")
+#~ def draw_map(obj):
+    #~ X = Const.X
+    #~ Y = Const.Y
+#~ 
+    #~ obj.vertical_gates_ids = set()
+    #~ obj.horizontal_gates_ids = set()
+#~ 
+    #~ for i in range(obj.map_obj.Y*6):
+        #~ obj.Canvas1.create_line(0, i*30+Const.Y, obj.map_obj.X*Const.X*6, i*30+Const.Y)
+        #~ obj.Canvas1.create_line(i*Const.X+Const.X//2, 0, i*Const.X+Const.X//2, obj.map_obj.Y*Const.Y*6)    
+#~ 
+    #~ for i in range(obj.map_obj.Y):
+        #~ for j in range(obj.map_obj.X):
+            #~ 
+            #~ if '╜' in rooms[obj.map_obj.m[i][j]]:
+                #~ obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
+                #~ obj.vertical_gates_ids.add(obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y*3-Y//2, image=obj.images.vert_door, anchor=tk.NW, tags=('gates_vertical','gates')))
+            #~ else:
+                #~ obj.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
+            #~ 
+            #~ if '╙' in rooms[obj.map_obj.m[i][j]]:
+                #~ obj.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
+            #~ else:
+                #~ obj.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=obj.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
+#~ 
+            #~ if '╛' in rooms[obj.map_obj.m[i][j]]:
+                #~ obj.Canvas1.create_image(j*X*6, i*Y*6, image=obj.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
+            #~ else:
+                #~ obj.Canvas1.create_image(j*X*6, i*Y*6, image=obj.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
+            #~ 
+            #~ if '╕' in rooms[obj.map_obj.m[i][j]]:
+                #~ obj.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=obj.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
+                #~ obj.horizontal_gates_ids.add(obj.Canvas1.create_image(j*X*6+X*3-X//2, (i+1)*Y*6, image=obj.images.horiz_door, anchor=tk.NW, tags=('gates_horizontal','gates')))
+            #~ else:
+                #~ obj.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=obj.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
+#~ 
+#~ 
+    #~ obj.Canvas1.create_image(16, 31, image=obj.images.player, anchor=tk.NW, tags=('player',))
+    #~ 
+    #~ obj.Canvas1.lift("vertical")
+    #~ obj.Canvas1.lift("gates")
 
 
-def draw_decorations(obj):
-    X = obj.map_obj.X
-    Y = obj.map_obj.Y
+#~ def draw_decorations(obj):
+    #~ X = obj.map_obj.X
+    #~ Y = obj.map_obj.Y
+#~ 
+    #~ for i in range(Y//3):
+        #~ for j in range(X//3):
+            #~ key = choice(list(obj.images.map_decorations_images.keys()))
+            #~ obj.Canvas1.create_image(rnd(0, X-1)*180+15+rnd(0,4)*30, rnd(0, Y-1)*180+30+rnd(0,4)*30, image=obj.images.map_decorations_images[key], anchor=(tk.NW,), tags=('decoration',))
+#~ 
+#~ def draw_goods(obj):
+    #~ X = obj.map_obj.X
+    #~ Y = obj.map_obj.Y
+    #~ 
+    #~ obj.goods_ids = set()
+    #~ 
+    #~ for i in range(Y):
+        #~ for j in range(X):
+            #~ if obj.goods_obj.goods_map[i][j]:
+                #~ item = obj.goods_obj.goods_map[i][j]
+                #~ img = obj.images.map_items_images[item['item']]
+                #~ obj.goods_ids.add(obj.Canvas1.create_image(j*180+item['coords'][0]*30+15, i*180+item['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('item',)))
+#~ 
+    #~ obj.Canvas1.lift("item")
+#~ 
+#~ def draw_monsters(obj):
+    #~ X = obj.map_obj.X
+    #~ Y = obj.map_obj.Y
+    #~ 
+    #~ obj.monsters_ids = set()
+    #~ 
+    #~ for i in range(Y):
+        #~ for j in range(X):
+            #~ if obj.monsters_obj.monsters_map[i][j]:
+                #~ monster = obj.monsters_obj.monsters_map[i][j]
+                #~ img = obj.images.map_monsters_images[monster['monster']]
+                #~ newid = obj.Canvas1.create_image(j*180+monster['coords'][0]*30+15, i*180+monster['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('monster',))
+                #~ obj.monsters_obj.monsters_map[i][j]['id'] = newid
+                #~ obj.monsters_ids.add(newid)
+    #~ obj.Canvas1.lift("monster")    
+#~ 
+#~ 
+#~ def hide_map(obj):
+    #~ obj.darkness_imgs_ids = set()
+    #~ for i in range(obj.map_obj.Y):
+        #~ for j in range(obj.map_obj.X):
+            #~ obj.darkness_imgs_ids.add(obj.Canvas1.create_image(i*180, j*180+15, image=obj.images.black180, anchor=tk.NW, tags=('darkness',)))
 
-    for i in range(Y//3):
-        for j in range(X//3):
-            key = choice(list(obj.images.map_decorations_images.keys()))
-            obj.Canvas1.create_image(rnd(0, X-1)*180+15+rnd(0,4)*30, rnd(0, Y-1)*180+30+rnd(0,4)*30, image=obj.images.map_decorations_images[key], anchor=(tk.NW,), tags=('decoration',))
-
-def draw_goods(obj):
-    X = obj.map_obj.X
-    Y = obj.map_obj.Y
-    
-    obj.goods_ids = set()
-    
-    for i in range(Y):
-        for j in range(X):
-            if obj.goods_obj.goods_map[i][j]:
-                item = obj.goods_obj.goods_map[i][j]
-                img = obj.images.map_items_images[item['item']]
-                obj.goods_ids.add(obj.Canvas1.create_image(j*180+item['coords'][0]*30+15, i*180+item['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('item',)))
-
-    obj.Canvas1.lift("item")
-
-def draw_monsters(obj):
-    X = obj.map_obj.X
-    Y = obj.map_obj.Y
-    
-    obj.monsters_ids = set()
-    
-    for i in range(Y):
-        for j in range(X):
-            if obj.monsters_obj.monsters_map[i][j]:
-                monster = obj.monsters_obj.monsters_map[i][j]
-                img = obj.images.map_monsters_images[monster['monster']]
-                newid = obj.Canvas1.create_image(j*180+monster['coords'][0]*30+15, i*180+monster['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('monster',))
-                obj.monsters_obj.monsters_map[i][j]['id'] = newid
-                obj.monsters_ids.add(newid)
-    obj.Canvas1.lift("monster")    
-
-
-def hide_map(obj):
-    obj.darkness_imgs_ids = set()
-    for i in range(obj.map_obj.Y):
-        for j in range(obj.map_obj.X):
-            obj.darkness_imgs_ids.add(obj.Canvas1.create_image(i*180, j*180+15, image=obj.images.black180, anchor=tk.NW, tags=('darkness',)))
 
 def pick_up(obj):
     x = obj.player_obj.glob_x
@@ -370,7 +372,7 @@ def pick_up(obj):
 
             obj.goods_obj.goods_map[y][x] = 0
 
-            message(obj, "%s picked" %(item['item'],))
+            obj.message(obj, "%s picked" %(item['item'],))
             if item['item'] in obj.player_obj.inventory:
                 obj.player_obj.inventory[item['item']] += Items.items_properties[item['item']]['charges']
             else:
@@ -477,7 +479,6 @@ def iface_update(obj):
     
 
 
-
 def reveal(obj):
     x1 = obj.player_obj.glob_x*180 + obj.player_obj.room_x*30 + 15
     y1 = obj.player_obj.glob_y*180 + obj.player_obj.room_y*30 + 15
@@ -497,7 +498,7 @@ def select_inventory1(obj):
     item = obj.Scrolledlistbox1.get(obj.Scrolledlistbox1.curselection()[0])
     current = obj.images.items_images[item]
     
-    message(obj, item + ': ' + str(Items.items_properties[item]))
+    obj.message(obj, item + ': ' + str(Items.items_properties[item]))
     
     obj.Canvas2.itemconfigure(obj.Canvas2.find_withtag('item')[0], image = current)
     obj.Label1.textvar.set(str(obj.player_obj.inventory[item]))
@@ -524,7 +525,7 @@ def craft(obj):
                 obj.player_obj.inventory[newitem] += Items.items_properties[newitem]['charges']
             else:
                 obj.player_obj.inventory[newitem] = 1
-            message(obj, "%s crafted" %(newitem,))
+            obj.message(obj, "%s crafted" %(newitem,))
 
 
 def use(obj):
@@ -580,7 +581,7 @@ def move_player(obj, side, dxy, newxy):
         
         obj.prev_revealed = reveal(obj)
         
-        message(obj, "YOU NOW AT (%d, %d)" %(obj.player_obj.glob_x, obj.player_obj.glob_y))
+        obj.message(obj, "YOU NOW AT (%d, %d)" %(obj.player_obj.glob_x, obj.player_obj.glob_y))
         
         X = obj.map_obj.X
         Y = obj.map_obj.Y
@@ -593,7 +594,7 @@ def move_player(obj, side, dxy, newxy):
             m_health = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['health']
             m_agility = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['agility']
             m_strength = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['strength']
-            message(obj, "There is monster %s with %d health, %d agility and %d strength" %(m_monster, m_health, m_agility, m_strength))
+            obj.message(obj, "There is monster %s with %d health, %d agility and %d strength" %(m_monster, m_health, m_agility, m_strength))
             obj.player_obj.combatmode = 1
         
         obj.player_obj.next_turn()
