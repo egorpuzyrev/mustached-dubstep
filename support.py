@@ -7,7 +7,7 @@ from random import randint as rnd
 from rooms import rooms
 from consts import Const
 from model import *
-from crafting import *
+#~ from crafting import *
 from my_functions import *
 
 
