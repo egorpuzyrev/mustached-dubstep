@@ -524,7 +524,7 @@ class New_Toplevel_1:
                     monster = self.monsters_obj.monsters_map[i][j]
                     img = self.images.map_monsters_images[monster['monster']]
                     newid = self.Canvas1.create_image(j*180+monster['coords'][0]*30+15, i*180+monster['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('monster',))
-                    self.monsters_obj.monsters_map[i][j]['id'] = newid
+                    self.monsters_obj.monsters_map[i][j]['tk_id'] = newid
                     self.monsters_ids.add(newid)
         self.Canvas1.lift("monster")    
 

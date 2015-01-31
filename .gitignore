@@ -1,4 +1,6 @@
 *.pyc
+*.pyo
 *.bat
 __pycache__
-geany_run_script.bat
+__pycache__/*
+geany_run_script.*

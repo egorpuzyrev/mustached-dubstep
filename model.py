@@ -323,11 +323,12 @@ class Monsters(object):
                                        'sawplayer' : 0,
                                        'monster' : choice(self.monsters_list),
                                        'coords' : (rnd(0, 4), rnd(0, 4)),
-                                       'id': 0
+                                       'tk_id': 0
                                        }
 
     def move(self, x1, y1, dx=0, dy=0):
-        self.monsters_map[y1][x1], self.monsters_map[y1+dy][x1+dx] = self.monsters_map[y1+dy][x1+dx], self.monsters_map[y1][x1]
+        pass
+        #~ self.monsters_map[y1][x1], self.monsters_map[y1+dy][x1+dx] = self.monsters_map[y1+dy][x1+dx], self.monsters_map[y1][x1]
 
     def next_turn(self, obj):
         X = self.map_obj.X
