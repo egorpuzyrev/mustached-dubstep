@@ -8,7 +8,7 @@ from copy import deepcopy
 from my_functions import *
 from consts import Const
 from rooms import *
-from crafting import *
+#~from crafting import *
 
 
 class Player(object):
