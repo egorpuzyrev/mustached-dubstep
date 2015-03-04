@@ -87,7 +87,7 @@ class Using(object):
 
     @staticmethod
     def use(obj):
-        _, item = obj.getcursel1(obj)
+        _, item = obj.getcursel1()
         if item in self.actions:
             pass
 
@@ -98,7 +98,7 @@ class Using(object):
         y = obj.player_obj.glob_y
 
         if obj.goods_obj.goods_map[y][x] and obj.goods_obj.goods_map[y][x]['item']=='reactor':
-            _, detail = obj.getcursel1(obj)
+            _, detail = obj.getcursel1()
             obj.player_obj.collected_details += 1
             obj.player_obj.inventory[detail] -= 1
         if obj.player_obj.collected_details == 4:
@@ -159,7 +159,7 @@ class Using(object):
 
     @staticmethod
     def use_pot(obj):
-        _, pot = obj.getcursel1(obj)
+        _, pot = obj.getcursel1()
 
         #~ obj.message('%s pot used' %(pot,))
         obj.player_obj.inventory[pot] -= 1
@@ -178,7 +178,7 @@ class Using(object):
         x = obj.player_obj.glob_x
         y = obj.player_obj.glob_y
         if obj.monsters_obj.monsters_map[y][x]:
-            cursel, weapon = obj.getcursel1(obj)
+            cursel, weapon = obj.getcursel1()
             obj.player_obj.inventory[weapon] -= 1
             
             p_health = obj.player_obj.stats['health']
@@ -239,7 +239,7 @@ class Using(object):
 
 
 
-#~ def obj.getcursel1(obj):
+#~ def obj.getcursel1():
     #~ cursel1 = obj.Scrolledlistbox1.curselection()
     #~ if cursel1:
         #~ item1 = obj.Scrolledlistbox1.get(cursel1[0])
