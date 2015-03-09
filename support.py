@@ -87,7 +87,7 @@ class Using(object):
 
     @staticmethod
     def use(obj):
-        _, item = obj.getcursel1(obj)
+        _, item = obj.getcursel1()
         if item in self.actions:
             pass
 
@@ -98,14 +98,14 @@ class Using(object):
         y = obj.player_obj.glob_y
 
         if obj.goods_obj.goods_map[y][x] and obj.goods_obj.goods_map[y][x]['item']=='reactor':
-            _, detail = obj.getcursel1(obj)
+            _, detail = obj.getcursel1()
             obj.player_obj.collected_details += 1
             obj.player_obj.inventory[detail] -= 1
         if obj.player_obj.collected_details == 4:
-            obj.message( "YOU ARE WINNER!!!")
-            obj.message( "YOU ARE WINNER!!!")
-            obj.message( "YOU ARE WINNER!!!")
-            obj.message( "YOU ARE WINNER!!!")
+            obj.message("YOU ARE WINNER!!!")
+            obj.message("YOU ARE WINNER!!!")
+            obj.message("YOU ARE WINNER!!!")
+            obj.message("YOU ARE WINNER!!!")
         
 
     @staticmethod
@@ -159,26 +159,26 @@ class Using(object):
 
     @staticmethod
     def use_pot(obj):
-        _, pot = obj.getcursel1(obj)
+        _, pot = obj.getcursel1()
 
-        #~ obj.message( '%s pot used' %(pot,))
+        #~ obj.message('%s pot used' %(pot,))
         obj.player_obj.inventory[pot] -= 1
         if 'health' in Items.items_properties[pot]:
             obj.player_obj.stats['health'] += Items.items_properties[pot]['health']
-            obj.message( 'Health is increased by %d' %(Items.items_properties[pot]['health'],))
+            obj.message('Health is increased by %d' %(Items.items_properties[pot]['health'],))
         if 'agility' in Items.items_properties[pot]:
             obj.player_obj.stats['agility'] += Items.items_properties[pot]['agility']
-            obj.message( 'Agility is increased by %d' %(Items.items_properties[pot]['agility'],))
+            obj.message('Agility is increased by %d' %(Items.items_properties[pot]['agility'],))
         if 'strength' in Items.items_properties[pot]:
             obj.player_obj.stats['strength'] += Items.items_properties[pot]['strength']
-            obj.message( 'Strength is increased by %d' %(Items.items_properties[pot]['strength'],))
+            obj.message('Strength is increased by %d' %(Items.items_properties[pot]['strength'],))
 
     @staticmethod
     def attack(obj):
         x = obj.player_obj.glob_x
         y = obj.player_obj.glob_y
         if obj.monsters_obj.monsters_map[y][x]:
-            cursel, weapon = obj.getcursel1(obj)
+            cursel, weapon = obj.getcursel1()
             obj.player_obj.inventory[weapon] -= 1
             
             p_health = obj.player_obj.stats['health']
@@ -209,26 +209,26 @@ class Using(object):
             p_attack = int(p_mul*p_strength*(1-m_mul) + Items.items_properties[weapon]['attack'])
             m_health -= p_attack
 
-            obj.message( "Player damaged %s by %d; %s'shealths is %d" %(m_monster, p_attack, m_monster, m_health))
+            obj.message("Player damaged %s by %d; %s'shealths is %d" %(m_monster, p_attack, m_monster, m_health))
 
             m_attack = int(m_mul*m_strength*(1-p_mul))
             p_health -= m_attack
 
-            obj.message( "%s damaged player by %d" %(m_monster, m_attack))
+            obj.message("%s damaged player by %d" %(m_monster, m_attack))
             
             obj.player_obj.stats['health'] = p_health
             obj.monsters_obj.monsters_map[y][x]['health'] = m_health
 
             if p_health<=0:
-                obj.message( "Player is dead")
-                obj.message( "Player is dead")
-                obj.message( "Player is dead")
-                obj.message( "Player is dead")
+                obj.message("Player is dead")
+                obj.message("Player is dead")
+                obj.message("Player is dead")
+                obj.message("Player is dead")
                 obj.Canvas1.after(5000, exit)
 
             
             if m_health<=0:
-                obj.message( "%s is dead" %(m_monster,))
+                obj.message("%s is dead" %(m_monster,))
                 obj.monsters_obj.monsters_map[y][x] = 0
                 monster = obj.monsters_ids.intersection(obj.Canvas1.find_overlapping(x*180+15, y*180+30, x*180+180+15, y*180+180+30))
                 obj.Canvas1.delete(monster.pop())
@@ -239,7 +239,7 @@ class Using(object):
 
 
 
-#~ def obj.getcursel1(obj):
+#~ def obj.getcursel1():
     #~ cursel1 = obj.Scrolledlistbox1.curselection()
     #~ if cursel1:
         #~ item1 = obj.Scrolledlistbox1.get(cursel1[0])
@@ -255,7 +255,7 @@ class Using(object):
     #~ else:
         #~ return None, None
 
-#~ def obj.message( obj.message):
+#~ def obj.message(obj.message):
     #~ obj.Message1.obj.messages.pop(0)
     #~ obj.Message1.obj.messages.append(str(obj.message))
     #~ obj.Message1.textvar.set('\n'.join(obj.Message1.obj.messages))
@@ -372,7 +372,7 @@ def pick_up(obj):
 
             obj.goods_obj.goods_map[y][x] = 0
 
-            obj.message( "%s picked" %(item['item'],))
+            obj.message("%s picked" %(item['item'],))
             if item['item'] in obj.player_obj.inventory:
                 obj.player_obj.inventory[item['item']] += Items.items_properties[item['item']]['charges']
             else:
@@ -498,7 +498,7 @@ def select_inventory1(obj):
     item = obj.Scrolledlistbox1.get(obj.Scrolledlistbox1.curselection()[0])
     current = obj.images.items_images[item]
     
-    obj.message( item + ': ' + str(Items.items_properties[item]))
+    obj.message(item + ': ' + str(Items.items_properties[item]))
     
     obj.Canvas2.itemconfigure(obj.Canvas2.find_withtag('item')[0], image = current)
     obj.Label1.textvar.set(str(obj.player_obj.inventory[item]))
@@ -525,7 +525,7 @@ def craft(obj):
                 obj.player_obj.inventory[newitem] += Items.items_properties[newitem]['charges']
             else:
                 obj.player_obj.inventory[newitem] = 1
-            obj.message( "%s crafted" %(newitem,))
+            obj.message("%s crafted" %(newitem,))
 
 
 def use(obj):
@@ -581,7 +581,7 @@ def move_player(obj, side, dxy, newxy):
         
         obj.prev_revealed = reveal(obj)
         
-        obj.message( "YOU NOW AT (%d, %d)" %(obj.player_obj.glob_x, obj.player_obj.glob_y))
+        obj.message("YOU NOW AT (%d, %d)" %(obj.player_obj.glob_x, obj.player_obj.glob_y))
         
         X = obj.map_obj.X
         Y = obj.map_obj.Y
@@ -594,7 +594,7 @@ def move_player(obj, side, dxy, newxy):
             m_health = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['health']
             m_agility = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['agility']
             m_strength = obj.monsters_obj.monsters_map[obj.player_obj.glob_y][obj.player_obj.glob_x]['strength']
-            obj.message( "There is monster %s with %d health, %d agility and %d strength" %(m_monster, m_health, m_agility, m_strength))
+            obj.message("There is monster %s with %d health, %d agility and %d strength" %(m_monster, m_health, m_agility, m_strength))
             obj.player_obj.combatmode = 1
         
         obj.player_obj.next_turn()

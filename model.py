@@ -8,7 +8,7 @@ from copy import deepcopy
 from my_functions import *
 from consts import Const
 from rooms import *
-from crafting import *
+#~from crafting import *
 
 
 class Player(object):
@@ -343,9 +343,9 @@ class Monsters(object):
                     dx = 0
                     dy = 0
                     if rnd(0,1):
-                        dy = (y - i)/abs(y - i)
+                        dy = int((y - i)/abs(y - i))
                     else:
-                        dx = (x - j)/abs(x - j)
+                        dx = int((x - j)/abs(x - j))
                     self.move(j, i, dx, dy)
                     obj.Canvas1.coords(self.monsters_map[i][j]['id'], (j+dx)*180+self.monsters_map[i][j]['coords'][0]*30+15, (i+dy)*180+self.monsters_map[i][j]['coords'][1]*30+30)
 

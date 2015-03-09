@@ -26,7 +26,7 @@ from PIL import Image, ImageTk
 from random import randint as rnd
 from rooms import rooms
 from model import *
-from crafting import *
+#~from crafting import *
 from my_functions import *
 
 from support import *
