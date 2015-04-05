@@ -14,7 +14,7 @@ setup(console=['main.py'],
                      ],
         'dll_excludes': ['pyside-python3.4.dll', 'shiboken-python3.4.dll',
         'QtNetwork4.dll', 'QtGui4.dll', 'QtNetwork4.dll']
-        #~ 'excludes': ['PyQt4', 'PyQt5']
+        # ~ 'excludes': ['PyQt4', 'PyQt5']
         }
     }
 )

@@ -10,3 +10,4 @@ class Const(object):
     Y = 30
     MAPSIZE = (10, 10)
     CELLSIZE = 50
+    MONSTERS_SPEED = 4

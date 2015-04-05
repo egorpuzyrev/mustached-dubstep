@@ -4,7 +4,7 @@
 # In conjunction with Tcl version 8.6
 #    Jan 24, 2015 07:10:24 PM
 import sys
-import os
+
 
 try:
     from Tkinter import *
@@ -26,32 +26,10 @@ from PIL import Image, ImageTk
 from random import randint as rnd
 from rooms import rooms
 from model import *
-from crafting import *
+# ~ from crafting import *
 from my_functions import *
 
 from support import *
-
-
-global global_map
-global_map = Map(15, 15)
-
-#~ print("CHECKING INTEGRITY")
-for i in check_integrity(global_map.m):
-    global_map.m[i[0]][i[1]] = 15
-global_map.close_borders()
-global_map.fix_all()
-global_map.modm = deepcopy(global_map.m)
-#~ global_map.m = global_map.modm
-#~ print("INTEGRITY CHECKED")
-
-global global_player
-global_player = Player(global_map)
-#~ global global_bitmap
-#~ global_bitmap = global_map.m
-global global_goods
-global_goods = Goods(global_map, N=(global_map.X*global_map.Y)//3)
-global global_monsters
-global_monsters = Monsters(global_map, global_player, N=(global_map.X*global_map.Y)//4)
 
 
 def vp_start_gui():
@@ -61,9 +39,15 @@ def vp_start_gui():
     root.title('New_Toplevel_1')
     root.geometry('600x500+390+106')
 
-    w = New_Toplevel_1 (root, global_map, global_player, global_goods, global_monsters)
+    w = New_Toplevel_1(
+        root,
+        global_map,
+        global_player,
+        global_goods,
+        global_monsters
+    )
 
-    #~ load_images()
+    # ~ load_images()
     w.draw_map()
     w.draw_decorations()
     w.draw_goods()
@@ -77,17 +61,18 @@ def vp_start_gui():
 
     root.mainloop()
 
-w = None
+# ~ w = None
 def create_New_Toplevel_1(root, param=None):
     '''Starting point when module is imported by another program.'''
     global w, w_win, rt
     rt = root
-    w = Toplevel (root)
+    w = Toplevel(root)
     w.title('New_Toplevel_1')
     w.geometry('600x500+390+106')
-    w_win = New_Toplevel_1 (w)
+    w_win = New_Toplevel_1(w)
     main2_support.init(w, w_win, param)
     return w_win
+
 
 def destroy_New_Toplevel_1():
     global w
@@ -99,16 +84,18 @@ class New_Toplevel_1:
     def __init__(self, master, map_obj, player_obj, items_obj, monsters_obj):
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
         _fgcolor = '#000000'  # X11 color: 'black'
-        _compcolor = '#d9d9d9' # X11 color: 'gray85'
-        _ana1color = '#d9d9d9' # X11 color: 'gray85' 
-        _ana2color = '#d9d9d9' # X11 color: 'gray85' 
+        _compcolor = '#d9d9d9'  # X11 color: 'gray85'
+        _ana1color = '#d9d9d9'  # X11 color: 'gray85'
+        _ana2color = '#d9d9d9'  # X11 color: 'gray85'
         self.style = ttk.Style()
         if sys.platform == "win32":
             self.style.theme_use('winnative')
-        self.style.configure('.',background=_bgcolor)
-        self.style.configure('.',foreground=_fgcolor)
-        self.style.map('.',background=
-            [('selected', _compcolor), ('active',_ana2color)])
+        self.style.configure('.', background=_bgcolor)
+        self.style.configure('.', foreground=_fgcolor)
+        self.style.map(
+            '.',
+            background=[('selected', _compcolor), ('active', _ana2color)]
+        )
         master.configure(highlightcolor="black")
 
         self.images = Images()
@@ -118,36 +105,60 @@ class New_Toplevel_1:
         self.monsters_obj = monsters_obj
 
         self.Frame1 = Frame(master)
-        #~ self.Frame1.place(relx=0.75, rely=0.02, relheight=0.97, relwidth=0.24)
+        # ~ self.Frame1.place(relx=0.75, rely=0.02, relheight=0.97, relwidth=0.24)
         self.Frame1.place(relx=1.0, rely=0.02, relheight=0.97, x=-150)
         self.Frame1.configure(relief=GROOVE)
         self.Frame1.configure(borderwidth="2")
-        #~ self.Frame1.configure(relief=GROOVE)
+        # ~ self.Frame1.configure(relief=GROOVE)
         self.Frame1.configure(width=145)
 
         self.Button1 = Button(self.Frame1)
         self.Button1.place(relx=0.34, rely=0.02, height=36, width=37)
         self.Button1.configure(activebackground="#d9d9d9")
         self.Button1.configure(text='''N''')
-        self.Button1.configure(command=lambda: move_player(self, side=Const.N, dxy=(0,-1), newxy=(2,4)))
+        self.Button1.configure(
+            command=lambda: move_player(
+                self,
+                side=Const.N,
+                dxy=(0, -1),
+                newxy=(2, 4))
+            )
 
         self.Button2 = Button(self.Frame1)
         self.Button2.place(relx=0.34, rely=0.1, height=36, width=37)
         self.Button2.configure(activebackground="#d9d9d9")
         self.Button2.configure(text='''S''')
-        self.Button2.configure(command=lambda: move_player(self, side=Const.S, dxy=(0,1), newxy=(2,0)))
+        self.Button2.configure(
+            command=lambda: move_player(
+                self,
+                side=Const.S,
+                dxy=(0, 1),
+                newxy=(2, 0))
+            )
 
         self.Button3 = Button(self.Frame1)
         self.Button3.place(relx=0.07, rely=0.1, height=36, width=37)
         self.Button3.configure(activebackground="#d9d9d9")
         self.Button3.configure(text='''W''')
-        self.Button3.configure(command=lambda: move_player(self, side=Const.W, dxy=(-1,0), newxy=(4,2)))
+        self.Button3.configure(
+            command=lambda: move_player(
+                self,
+                side=Const.W,
+                dxy=(-1, 0),
+                newxy=(4, 2))
+            )
 
         self.Button4 = Button(self.Frame1)
         self.Button4.place(relx=0.62, rely=0.1, height=36, width=37)
         self.Button4.configure(activebackground="#d9d9d9")
         self.Button4.configure(text='''E''')
-        self.Button4.configure(command=lambda: move_player(self, side=Const.E, dxy=(1,0), newxy=(0,2)))
+        self.Button4.configure(
+            command=lambda: move_player(
+                self,
+                side=Const.E,
+                dxy=(1, 0),
+                newxy=(0, 2))
+            )
 
         self.Button5 = Button(self.Frame1)
         self.Button5.place(relx=0.07, rely=0.19, height=26, width=57)
@@ -159,41 +170,42 @@ class New_Toplevel_1:
         self.Button6.place(relx=0.07, rely=0.25, height=26, width=57)
         self.Button6.configure(activebackground="#d9d9d9")
         self.Button6.configure(text='''Pick up''')
-        self.Button6.configure(command = lambda: pick_up(self))
+        self.Button6.configure(command=lambda: pick_up(self))
 
         self.Button7 = Button(self.Frame1)
         self.Button7.place(relx=0.48, rely=0.19, height=26, width=57)
         self.Button7.configure(activebackground="#d9d9d9")
         self.Button7.configure(text='''Door''')
-        self.Button7.configure(command = lambda: interact_with_door(self))
+        self.Button7.configure(command=lambda: interact_with_door(self))
 
         self.Button8 = Button(self.Frame1)
         self.Button8.place(relx=0.48, rely=0.25, height=26, width=57)
         self.Button8.configure(activebackground="#d9d9d9")
         self.Button8.configure(text='''Craft''')
-        self.Button8.configure(command = lambda: craft(self))
+        self.Button8.configure(command=lambda: craft(self))
 
         self.Scrolledlistbox1 = ScrolledListBox(self.Frame1)
-        self.Scrolledlistbox1.place(relx=0.04, rely=0.49, relheight=0.12
-                , width=130)
+        self.Scrolledlistbox1.place(relx=0.04, rely=0.49, relheight=0.12,
+                                    width=130)
         self.Scrolledlistbox1.configure(background="white")
         self.Scrolledlistbox1.configure(font="TkFixedFont")
         self.Scrolledlistbox1.configure(highlightcolor="#d9d9d9")
         self.Scrolledlistbox1.configure(selectbackground="#c4c4c4")
         self.Scrolledlistbox1.configure(takefocus="0")
         self.Scrolledlistbox1.configure(width=0)
-        
+
         self.Scrolledlistbox1.configure(selectmode=tk.SINGLE)
-        
+
         for i in self.player_obj.inventory:
             self.Scrolledlistbox1.insert(tk.END, i)
-        
-        
+
         self.Scrolledlistbox1.configure(exportselection=0)
         self.Scrolledlistbox1.activate(0)
         self.Scrolledlistbox1.selection_set(0)
-        self.Scrolledlistbox1.bind("<<ListboxSelect>>", lambda event: select_inventory1(self))
-        
+        self.Scrolledlistbox1.bind(
+            "<<ListboxSelect>>",
+            lambda event: select_inventory1(self)
+        )
 
         self.Canvas2 = Canvas(self.Frame1)
         self.Canvas2.place(relx=0.03, rely=0.31)
@@ -203,10 +215,14 @@ class New_Toplevel_1:
         self.Canvas2.configure(selectbackground="#c4c4c4")
         self.Canvas2.configure(width=60)
         self.Canvas2.configure(height=60)
-        
-        current = self.images.items_images[self.getcursel1()[1]]
-        self.Canvas2.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
 
+        current = self.images.items_images[self.getcursel1()[1]]
+        self.Canvas2.create_image(
+            3,
+            3,
+            image=current,
+            anchor=tk.NW, tags=('item', )
+        )
 
         self.Canvas3 = Canvas(self.Frame1)
         self.Canvas3.place(relx=0.48, rely=0.31)
@@ -218,23 +234,21 @@ class New_Toplevel_1:
         self.Canvas3.configure(width=60)
         self.Canvas3.configure(height=60)
 
-
-
         self.Label1 = Label(self.Frame1)
         self.Label1.place(relx=0.14, rely=0.45, height=18, width=37)
         self.Label1.configure(activebackground="#f9f9f9")
         self.Label1.textvar = tk.StringVar()
-        self.Label1.configure(textvariable = self.Label1.textvar)
+        self.Label1.configure(textvariable=self.Label1.textvar)
 
         self.Label2 = Label(self.Frame1)
         self.Label2.place(relx=0.55, rely=0.45, height=18, width=37)
         self.Label2.configure(activebackground="#f9f9f9")
         self.Label2.textvar = tk.StringVar()
-        self.Label2.configure(textvariable = self.Label2.textvar)
+        self.Label2.configure(textvariable=self.Label2.textvar)
 
         self.Scrolledlistbox2 = ScrolledListBox(self.Frame1)
-        self.Scrolledlistbox2.place(relx=0.04, rely=0.62, relheight=0.12
-                , width=130)
+        self.Scrolledlistbox2.place(relx=0.04, rely=0.62, relheight=0.12,
+                                    width=130)
         self.Scrolledlistbox2.configure(background="white")
         self.Scrolledlistbox2.configure(font="TkFixedFont")
         self.Scrolledlistbox2.configure(highlightcolor="#d9d9d9")
@@ -249,15 +263,22 @@ class New_Toplevel_1:
         self.Scrolledlistbox2.configure(exportselection=0)
         self.Scrolledlistbox2.activate(0)
         self.Scrolledlistbox2.selection_set(0)
-        self.Scrolledlistbox2.bind("<<ListboxSelect>>", lambda event: select_inventory2(self))
+        self.Scrolledlistbox2.bind(
+            "<<ListboxSelect>>",
+            lambda event: select_inventory2(self)
+        )
 
         current = self.images.items_images[self.getcursel2()[1]]
-        self.Canvas3.create_image(3, 3, image=current, anchor=tk.NW, tags=('item',))
-
+        self.Canvas3.create_image(
+            3,
+            3,
+            image=current,
+            anchor=tk.NW, tags=('item', )
+        )
 
         self.Labelframe1 = LabelFrame(self.Frame1)
-        self.Labelframe1.place(relx=0.07, rely=0.82, relheight=0.15
-                , relwidth=0.79)
+        self.Labelframe1.place(relx=0.07, rely=0.82, relheight=0.15,
+                               relwidth=0.79)
         self.Labelframe1.configure(relief=GROOVE)
         self.Labelframe1.configure(text='''Stats''')
         self.Labelframe1.configure(width=115)
@@ -306,8 +327,8 @@ class New_Toplevel_1:
         self.Frame2.configure(relief=GROOVE)
         self.Frame2.configure(borderwidth="2")
         self.Frame2.configure(relief=GROOVE)
-        #~ self.Frame2.configure(width=435)
-        #~ self.Frame2.configure(width=435)
+        # ~ self.Frame2.configure(width=435)
+        # ~ self.Frame2.configure(width=435)
 
         self.Canvas1 = Canvas(self.Frame2)
         self.Canvas1.place(relx=0.02, rely=0.0, relheight=0.89, relwidth=0.95)
@@ -315,37 +336,139 @@ class New_Toplevel_1:
         self.Canvas1.configure(borderwidth="2")
         self.Canvas1.configure(relief=RIDGE)
         self.Canvas1.configure(selectbackground="#c4c4c4")
-        #~ self.Canvas1.configure(width=414)
-        #~ self.Canvas1.configure(width=self.map_obj.X*120+15)
+        # ~ self.Canvas1.configure(width=414)
+        # ~ self.Canvas1.configure(width=self.map_obj.X*120+15)
 
-        #~ self.Canvas1.bind("<Button-1>", lambda event: oncanvas(event, self))
-        
+        # ~ self.Canvas1.bind("<Button-1>", lambda event: oncanvas(event, self))
+
         self.Canvas1.bind("<Button-3>", lambda event: mv(event, self))
-        if sys.platform == "posix":
-            self.Canvas1.bind("<Button-4>", lambda event: on_mousewheel_up(event, self))
-            self.Canvas1.bind("<Button-5>", lambda event: on_mousewheel_down(event, self))
+
+        if sys.platform == "posix" or "linux" in sys.platform:
+            self.Canvas1.bind(
+                "<Button-4>",
+                lambda event: on_mousewheel_up(event, self)
+            )
+
+            self.Canvas1.bind(
+                "<Button-5>",
+                lambda event: on_mousewheel_down(event, self)
+            )
+
         else:
-            self.Canvas1.bind("<MouseWheel>", lambda event: on_mousewheel_up(event, self))
+            self.Canvas1.bind(
+                "<MouseWheel>",
+                lambda event: on_mousewheel_up(event, self)
+            )
 
-        self.Canvas1.bind_all(sequence='<KeyPress-W>', func=lambda event: move_player(self, side=Const.N, dxy=(0,-1), newxy=(2,4)))
-        self.Canvas1.bind_all(sequence='<KeyPress-S>', func=lambda event: move_player(self, side=Const.S, dxy=(0,1), newxy=(2,0)))
-        self.Canvas1.bind_all(sequence='<KeyPress-A>', func=lambda event: move_player(self, side=Const.W, dxy=(-1,0), newxy=(4,2)))
-        self.Canvas1.bind_all(sequence='<KeyPress-D>', func=lambda event: move_player(self, side=Const.E, dxy=(1,0), newxy=(0,2)))
-        
-        self.Canvas1.bind_all(sequence='<KeyPress-w>', func=lambda event: move_player(self, side=Const.N, dxy=(0,-1), newxy=(2,4)))
-        self.Canvas1.bind_all(sequence='<KeyPress-s>', func=lambda event: move_player(self, side=Const.S, dxy=(0,1), newxy=(2,0)))
-        self.Canvas1.bind_all(sequence='<KeyPress-a>', func=lambda event: move_player(self, side=Const.W, dxy=(-1,0), newxy=(4,2)))
-        self.Canvas1.bind_all(sequence='<KeyPress-d>', func=lambda event: move_player(self, side=Const.E, dxy=(1,0), newxy=(0,2)))
-        
-        self.Canvas1.bind_all(sequence='<KeyPress-E>', func=lambda event: pick_up(self))
-        self.Canvas1.bind_all(sequence='<KeyPress-e>', func=lambda event: pick_up(self))
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-W>',
+            func=lambda event: move_player(
+                self,
+                side=Const.N,
+                dxy=(0, -1),
+                newxy=(2, 4)
+            )
+        )
 
-        self.Canvas1.bind_all(sequence='<KeyPress-F>', func=lambda event: Using.use_flashlight(self))
-        self.Canvas1.bind_all(sequence='<KeyPress-f>', func=lambda event: Using.use_flashlight(self))
-        
-        self.Canvas1.bind_all(sequence='<KeyPress-R>', func=lambda event: craft(self))
-        self.Canvas1.bind_all(sequence='<KeyPress-r>', func=lambda event: craft(self))
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-S>',
+            func=lambda event: move_player(
+                self,
+                side=Const.S,
+                dxy=(0, 1),
+                newxy=(2, 0)
+            )
+        )
 
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-A>',
+            func=lambda event: move_player(
+                self,
+                side=Const.W,
+                dxy=(-1, 0),
+                newxy=(4, 2)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-D>',
+            func=lambda event: move_player(
+                self,
+                side=Const.E,
+                dxy=(1, 0),
+                newxy=(0, 2)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-w>',
+            func=lambda event: move_player(
+                self,
+                side=Const.N,
+                dxy=(0, -1),
+                newxy=(2, 4)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-s>',
+            func=lambda event: move_player(
+                self,
+                side=Const.S,
+                dxy=(0, 1),
+                newxy=(2, 0)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-a>',
+            func=lambda event: move_player(
+                self,
+                side=Const.W,
+                dxy=(-1, 0),
+                newxy=(4, 2)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-d>',
+            func=lambda event: move_player(
+                self,
+                side=Const.E,
+                dxy=(1, 0),
+                newxy=(0, 2)
+            )
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-E>',
+            func=lambda event: pick_up(self)
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-e>',
+            func=lambda event: pick_up(self)
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-F>',
+            func=lambda event: Using.use_flashlight(self)
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-f>',
+            func=lambda event: Using.use_flashlight(self)
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-R>',
+            func=lambda event: craft(self)
+        )
+
+        self.Canvas1.bind_all(
+            sequence='<KeyPress-r>',
+            func=lambda event: craft(self)
+        )
 
         self.Scrollbar1 = tk.Scrollbar(self.Frame2)
         self.Scrollbar1.pack(anchor=tk.E, expand=1)
@@ -363,9 +486,13 @@ class New_Toplevel_1:
 
         self.Canvas1.configure(xscrollcommand=self.Scrollbar2.set)
 
-        self.Canvas1.configure(scrollregion=(0, 0, 180*self.map_obj.X+15, 180*self.map_obj.Y+30))
-
-
+        self.Canvas1.configure(
+            scrollregion=(
+                0,
+                0,
+                180*self.map_obj.X+15,
+                180*self.map_obj.Y+30)
+            )
 
         self.Message1 = Message(self.Frame2)
         self.Message1.place(relx=0.02, rely=1.0, relwidth=0.95, y=-70)
@@ -373,57 +500,59 @@ class New_Toplevel_1:
         self.Message1.configure(relief=RIDGE)
         self.Message1.configure(text='''Message''')
         self.Message1.configure(width=413)
-        
+
         self.Message1.textvar = tk.StringVar()
         self.Message1.config(textvariable=self.Message1.textvar)
         self.Message1.messages = ['test1', 'test1', 'test3', 'test4']
         self.Message1.textvar.set('\n'.join(self.Message1.messages))
 
-        self.menubar = Menu(master,bg=_bgcolor,fg=_fgcolor)
-        master.configure(menu = self.menubar)
+        self.menubar = Menu(master, bg=_bgcolor, fg=_fgcolor)
+        master.configure(menu=self.menubar)
 
-        self.game = Menu(master,tearoff=0)
-        self.menubar.add_cascade(menu=self.game,
-                activebackground="#d9d9d9",
-                activeforeground="#111111",
-                background="#d9d9d9",
-                foreground="#000000",
-                label="Game")
+        self.game = Menu(master, tearoff=0)
+        self.menubar.add_cascade(
+            menu=self.game,
+            activebackground="#d9d9d9",
+            activeforeground="#111111",
+            background="#d9d9d9",
+            foreground="#000000",
+            label="Game")
         self.game.add_command(
-                activebackground="#d9d9d9",
-                activeforeground="#000000",
-                background="#d9d9d9",
-                command=lambda: newgame(self),
-                foreground="#000000",
-                label="New")
+            activebackground="#d9d9d9",
+            activeforeground="#000000",
+            background="#d9d9d9",
+            command=lambda: newgame(self),
+            foreground="#000000",
+            label="New")
         self.game.add_command(
-                activebackground="#d9d9d9",
-                activeforeground="#000000",
-                background="#d9d9d9",
-                command=sys.exit,
-                foreground="#000000",
-                label="Exit")
-        self.help = Menu(master,tearoff=0)
-        self.menubar.add_cascade(menu=self.help,
-                activebackground="#d9d9d9",
-                activeforeground="#111111",
-                background="#d9d9d9",
-                foreground="#000000",
-                label="Help")
+            activebackground="#d9d9d9",
+            activeforeground="#000000",
+            background="#d9d9d9",
+            command=sys.exit,
+            foreground="#000000",
+            label="Exit")
+        self.help = Menu(master, tearoff=0)
+        self.menubar.add_cascade(
+            menu=self.help,
+            activebackground="#d9d9d9",
+            activeforeground="#111111",
+            background="#d9d9d9",
+            foreground="#000000",
+            label="Help")
         self.help.add_command(
-                activebackground="#d9d9d9",
-                activeforeground="#000000",
-                background="#d9d9d9",
-                command=main2_support.TODO,
-                foreground="#000000",
-                label="Help")
+            activebackground="#d9d9d9",
+            activeforeground="#000000",
+            background="#d9d9d9",
+            command=main2_support.TODO,
+            foreground="#000000",
+            label="Help")
         self.help.add_command(
-                activebackground="#d9d9d9",
-                activeforeground="#000000",
-                background="#d9d9d9",
-                command=main2_support.TODO,
-                foreground="#000000",
-                label="About")
+            activebackground="#d9d9d9",
+            activeforeground="#000000",
+            background="#d9d9d9",
+            command=main2_support.TODO,
+            foreground="#000000",
+            label="About")
 
     def message(self, message):
         self.Message1.messages.pop(0)
@@ -437,7 +566,7 @@ class New_Toplevel_1:
             return cursel1[0], item1
         else:
             return None, None
-        
+
     def getcursel2(self):
         cursel2 = self.Scrolledlistbox2.curselection()
         if cursel2:
@@ -454,37 +583,120 @@ class New_Toplevel_1:
         self.horizontal_gates_ids = set()
 
         for i in range(self.map_obj.Y*6):
-            self.Canvas1.create_line(0, i*30+Const.Y, self.map_obj.X*Const.X*6, i*30+Const.Y)
-            self.Canvas1.create_line(i*Const.X+Const.X//2, 0, i*Const.X+Const.X//2, self.map_obj.Y*Const.Y*6)    
+            self.Canvas1.create_line(
+                0,
+                i*30+Const.Y,
+                self.map_obj.X*Const.X*6,
+                i*30+Const.Y
+            )
+
+            self.Canvas1.create_line(
+                i*Const.X+Const.X//2,
+                0,
+                i*Const.X+Const.X//2,
+                self.map_obj.Y*Const.Y*6
+            )
 
         for i in range(self.map_obj.Y):
             for j in range(self.map_obj.X):
-                
+
                 if '╜' in rooms[self.map_obj.m[i][j]]:
-                    self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
-                    self.vertical_gates_ids.add(self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y*3-Y//2, image=self.images.vert_door, anchor=tk.NW, tags=('gates_vertical','gates')))
+                    self.Canvas1.create_image(
+                        j*X*6-X//2,
+                        i*Y*6+Y//2,
+                        image=self.images.wall_vert_door,
+                        anchor=tk.NW,
+                        tags=('vertical', )
+                    )
+
+                    self.vertical_gates_ids.add(
+                        self.Canvas1.create_image(
+                            j*X*6-X//2,
+                            i*Y*6+Y*3-Y//2,
+                            image=self.images.vert_door,
+                            anchor=tk.NW,
+                            tags=('gates_vertical', 'gates'))
+                        )
+
                 else:
-                    self.Canvas1.create_image(j*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
-                
+                    self.Canvas1.create_image(
+                        j*X*6-X//2,
+                        i*Y*6+Y//2,
+                        image=self.images.wall_vert_nodoor,
+                        anchor=tk.NW,
+                        tags=('vertical', )
+                    )
+
                 if '╙' in rooms[self.map_obj.m[i][j]]:
-                    self.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_door, anchor=tk.NW, tags=('vertical',))
+                    pass
+                    self.Canvas1.create_image(
+                        (j+1)*X*6-X//2,
+                        i*Y*6+Y//2,
+                        image=self.images.wall_vert_door,
+                        anchor=tk.NW, tags=('vertical', )
+                    )
+
                 else:
-                    self.Canvas1.create_image((j+1)*X*6-X//2, i*Y*6+Y//2, image=self.images.wall_vert_nodoor, anchor=tk.NW, tags=('vertical',))
+                    self.Canvas1.create_image(
+                        (j+1)*X*6-X//2,
+                        i*Y*6+Y//2,
+                        image=self.images.wall_vert_nodoor,
+                        anchor=tk.NW,
+                        tags=('vertical', )
+                    )
 
                 if '╛' in rooms[self.map_obj.m[i][j]]:
-                    self.Canvas1.create_image(j*X*6, i*Y*6, image=self.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
+                    pass
+                    self.Canvas1.create_image(
+                        j*X*6,
+                        i*Y*6,
+                        image=self.images.wall_horiz_door,
+                        anchor=tk.NW,
+                        tags=('horizontal', )
+                    )
+
                 else:
-                    self.Canvas1.create_image(j*X*6, i*Y*6, image=self.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
-                
+                    self.Canvas1.create_image(
+                        j*X*6,
+                        i*Y*6,
+                        image=self.images.wall_horiz_nodoor,
+                        anchor=tk.NW,
+                        tags=('horizontal', )
+                    )
+
                 if '╕' in rooms[self.map_obj.m[i][j]]:
-                    self.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=self.images.wall_horiz_door, anchor=tk.NW, tags=('horizontal',))
-                    self.horizontal_gates_ids.add(self.Canvas1.create_image(j*X*6+X*3-X//2, (i+1)*Y*6, image=self.images.horiz_door, anchor=tk.NW, tags=('gates_horizontal','gates')))
+                    self.Canvas1.create_image(
+                        j*X*6,
+                        (i+1)*Y*6,
+                        image=self.images.wall_horiz_door,
+                        anchor=tk.NW, tags=('horizontal', )
+                    )
+
+                    self.horizontal_gates_ids.add(
+                        self.Canvas1.create_image(
+                            j*X*6+X*3-X//2,
+                            (i+1)*Y*6,
+                            image=self.images.horiz_door,
+                            anchor=tk.NW,
+                            tags=('gates_horizontal', 'gates'))
+                        )
+
                 else:
-                    self.Canvas1.create_image(j*X*6, (i+1)*Y*6, image=self.images.wall_horiz_nodoor, anchor=tk.NW, tags=('horizontal',))
+                    self.Canvas1.create_image(
+                        j*X*6,
+                        (i+1)*Y*6,
+                        image=self.images.wall_horiz_nodoor,
+                        anchor=tk.NW,
+                        tags=('horizontal', )
+                    )
 
+        self.Canvas1.create_image(
+            16,
+            31,
+            image=self.images.player,
+            anchor=tk.NW, tags=('player', )
+        )
 
-        self.Canvas1.create_image(16, 31, image=self.images.player, anchor=tk.NW, tags=('player',))
-        
         self.Canvas1.lift("vertical")
         self.Canvas1.lift("gates")
 
@@ -495,45 +707,75 @@ class New_Toplevel_1:
         for i in range(Y//3):
             for j in range(X//3):
                 key = choice(list(self.images.map_decorations_images.keys()))
-                self.Canvas1.create_image(rnd(0, X-1)*180+15+rnd(0,4)*30, rnd(0, Y-1)*180+30+rnd(0,4)*30, image=self.images.map_decorations_images[key], anchor=(tk.NW,), tags=('decoration',))
+
+                self.Canvas1.create_image(
+                    rnd(0, X-1)*180+15+rnd(0, 4)*30,
+                    rnd(0, Y-1)*180+30+rnd(0, 4)*30,
+                    image=self.images.map_decorations_images[key],
+                    anchor=(tk.NW, ),
+                    tags=('decoration', )
+                )
 
     def draw_goods(self):
         X = self.map_obj.X
         Y = self.map_obj.Y
-        
+
         self.goods_ids = set()
-        
+
         for i in range(Y):
             for j in range(X):
                 if self.goods_obj.goods_map[i][j]:
                     item = self.goods_obj.goods_map[i][j]
                     img = self.images.map_items_images[item['item']]
-                    self.goods_ids.add(self.Canvas1.create_image(j*180+item['coords'][0]*30+15, i*180+item['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('item',)))
+
+                    self.goods_ids.add(
+                        self.Canvas1.create_image(
+                            j*180+item['coords'][0]*30+15,
+                            i*180+item['coords'][1]*30+30,
+                            image=img,
+                            anchor=tk.NW,
+                            tags=('item', ))
+                        )
 
         self.Canvas1.lift("item")
 
     def draw_monsters(self):
         X = self.map_obj.X
         Y = self.map_obj.Y
-        
+
         self.monsters_ids = set()
-        
+
         for i in range(Y):
             for j in range(X):
                 if self.monsters_obj.monsters_map[i][j]:
                     monster = self.monsters_obj.monsters_map[i][j]
                     img = self.images.map_monsters_images[monster['monster']]
-                    newid = self.Canvas1.create_image(j*180+monster['coords'][0]*30+15, i*180+monster['coords'][1]*30+30, image=img, anchor=tk.NW, tags=('monster',))
+
+                    newid = self.Canvas1.create_image(
+                        j*180+monster['coords'][0]*30+15,
+                        i*180+monster['coords'][1]*30+30,
+                        image=img,
+                        anchor=tk.NW,
+                        tags=('monster', )
+                    )
+
                     self.monsters_obj.monsters_map[i][j]['tk_id'] = newid
                     self.monsters_ids.add(newid)
-        self.Canvas1.lift("monster")    
+
+        self.Canvas1.lift("monster")
 
     def hide_map(self):
         self.darkness_imgs_ids = set()
         for i in range(self.map_obj.Y):
             for j in range(self.map_obj.X):
-                self.darkness_imgs_ids.add(self.Canvas1.create_image(i*180, j*180+15, image=self.images.black180, anchor=tk.NW, tags=('darkness',)))
-
+                self.darkness_imgs_ids.add(
+                    self.Canvas1.create_image(
+                        i*180,
+                        j*180+15,
+                        image=self.images.black180,
+                        anchor=tk.NW,
+                        tags=('darkness', ))
+                    )
 
 
 # The following code is added to facilitate the Scrolled widgets you specified.
@@ -550,7 +792,7 @@ class AutoScroll(object):
             pass
         hsb = ttk.Scrollbar(master, orient='horizontal', command=self.xview)
 
-        #self.configure(yscrollcommand=self._autoscroll(vsb),
+        # self.configure(yscrollcommand=self._autoscroll(vsb),
         #    xscrollcommand=self._autoscroll(hsb))
         try:
             self.configure(yscrollcommand=self._autoscroll(vsb))
@@ -571,10 +813,10 @@ class AutoScroll(object):
         # Copy geometry methods of master  (taken from ScrolledText.py)
         if py3:
             methods = Pack.__dict__.keys() | Grid.__dict__.keys() \
-                  | Place.__dict__.keys()
+                | Place.__dict__.keys()
         else:
             methods = Pack.__dict__.keys() + Grid.__dict__.keys() \
-                  + Place.__dict__.keys()
+                + Place.__dict__.keys()
 
         for meth in methods:
             if meth[0] != '_' and meth not in ('config', 'configure'):
@@ -595,6 +837,7 @@ class AutoScroll(object):
     def __str__(self):
         return str(self.master)
 
+
 def _create_container(func):
     '''Creates a ttk Frame with a given master, and use this new frame to
     place the scrollbars and the widget.'''
@@ -602,6 +845,7 @@ def _create_container(func):
         container = ttk.Frame(master)
         return func(cls, container, **kw)
     return wrapped
+
 
 class ScrolledListBox(AutoScroll, Listbox):
     '''A standard Tkinter Text widget with scrollbars that will
@@ -611,8 +855,49 @@ class ScrolledListBox(AutoScroll, Listbox):
         Listbox.__init__(self, master, **kw)
         AutoScroll.__init__(self, master)
 
+
 if __name__ == '__main__':
+
+    global global_map
+
+    size_x = 50
+    size_y = 50
+
+    global_map = Map(size_x, size_y)
+    # ~ global_map.expand(sides=[Const.E, Const.S], count=9)
+
+    # ~ print("CHECKING INTEGRITY")
+    for i in check_integrity(global_map.m, x0=size_x//2, y0=size_y//2):
+        global_map.m[i[0]][i[1]] = 15
+    global_map.close_borders()
+    global_map.fix_all()
+    global_map.modm = deepcopy(global_map.m)
+
+    print("_____________________________")
+    check_integrity(global_map.m)
+
+    # ~ global_map.rebuild_pathmap()
+
+    # ~ global_map.m = global_map.modm
+    # ~ print("INTEGRITY CHECKED")
+
+    global global_player
+    global_player = Player(global_map)
+
+    # ~ global global_bitmap
+    # ~ global_bitmap = global_map.m
+
+    global global_goods
+    global_goods = Goods(global_map, N=(global_map.X*global_map.Y)//3)
+
+    global global_monsters
+    global_monsters = Monsters(
+        global_map,
+        global_player,
+        # ~ 3
+        N=(global_map.X*global_map.Y)//4
+    )
+
+    print("STARTING GUI")
+
     vp_start_gui()
-
-
-

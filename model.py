@@ -8,7 +8,7 @@ from copy import deepcopy
 from my_functions import *
 from consts import Const
 from rooms import *
-from crafting import *
+# ~ from crafting import *
 
 
 class Player(object):
@@ -21,14 +21,16 @@ class Player(object):
         self.collected_details = 0
         self.map_obj = map_obj
 
-
-        self.stats = {'health': 30,
+        self.stats = {'health': 300000000,
                       'agility': 30,
                       'strength': 20,
                       }
 
-        self.inventory = {'flashlight': 2, 'cutting torch': 2, 'hammer': 2, 'hand': 50}
-        
+        self.inventory = {'flashlight': 2,
+                          'cutting torch': 2,
+                          'hammer': 2,
+                          'hand': 50
+                          }
 
 
     def move_inside_room(self, direction):
@@ -48,9 +50,9 @@ class Player(object):
             self.prev_glob_y = self.glob_y
             self.glob_x += dx
             self.glob_y += dy
-        
+
         self.new_turn()
-        
+
 
     def next_turn(self):
         self.inventory['cutting torch'] = 2
@@ -90,7 +92,6 @@ class Map(object):
                     x =rnd(1, 15)
                 self.m[i][j] = x
 
-
     def __fix_cell(self, row=-1, column=-1):
         if not(row==-1 or column==-1):
 
@@ -100,28 +101,27 @@ class Map(object):
                     self.m[row][column] |= 0b0001
             else:
                 self.m[row][colimn] &= 0b1110
-            
+
             if not(column+1<self.X):
                 if ncmpr(self.m[row][column], self.m[row][column+1]):
                     self.m[row][column] |= 0b0100
                     self.m[row][colimn+1] |= 0b0001
             else:
                 self.m[row-1][column] &= 0b1011
-            
+
             if not(row-1>=0):
                 if ncmpt(self.m[row-1][column], self.m[row][column]):
                     self.m[row-1][column] |= 0b0010
                     self.m[row][column] |= 0b1000
             else:
                 self.m[row][column] &= 0b0111
-            
+
             if not(row+1<self.Y):
                 if ncmpt(self.m[row][column], self.m[row+1][column]):
                     self.m[row+1][column] |= 0b1000
                     self.m[row][column] |= 0b0010
             else:
                 self.m[row][column] &= 0b0010
-
 
     def __fix_all(self):
         self.__fix_area(rows=range(self.Y), cols=range(self.X))
@@ -130,7 +130,7 @@ class Map(object):
 
     def __fix_area(self, rows=[-1,], cols=[-1,]):
         if not(-1 in rows) and not(-1 in cols):
-        
+
             for i in [k for k in rows if k<self.Y-1]:
                 for j in range(self.X):
                     if ncmpt(self.m[i][j], self.m[i+1][j]):
@@ -155,7 +155,6 @@ class Map(object):
                         self.m[i+1][j] |= 0b1000
                         self.m[i][j] |= 0b0010
 
-
     def close_borders(self, force=0):
         if force or not(Const.W in self._exp):
             for i in range(self.Y):
@@ -177,8 +176,6 @@ class Map(object):
                 if ncmpt(self.m[-1][i], 0):
                     self.m[-1][i] &= 0b1101
 
-
-
     def rebuild_bitmap(self):
         b = ''
         for i in range(self.Y):
@@ -198,8 +195,6 @@ class Map(object):
 
         self.bitmap = [list(map(int, bitmap[i])) for i in range(len(bitmap))]
 
-
-
     def rebuild_modm_bitmap(self):
         b = ''
         for i in range(self.Y):
@@ -218,6 +213,42 @@ class Map(object):
             del(bitmap[i*3])
 
         self.modm_bitmap = [list(map(int, bitmap[i])) for i in range(len(bitmap))]
+
+    """
+    def rebuild_pathmap(self):
+        self.path_map = [[0 for j in range(self.X)] for i in range(self.Y)]
+
+        checked = set()
+        cur_deep = 1
+
+        fifo = [(0, 0), (-1, -1)]
+
+        #~ while not(len(checked)==self.X*self.Y)):
+        for k in range(self.X*self.Y):
+            #~ while not(len(fifo)==0):
+            while not(fifo and fifo[0]==(-1, -1)):
+                cur_y, cur_x = fifo.pop(0)
+                #~ if cur_y==cur_x==-1:
+                    #~ cur_deep += 1
+                d = dxy(self.m[cur_y][cur_x])
+                for i in d:
+                    if not((cur_y+i[1], cur_x+i[0]) in checked or (cur_y+i[1], cur_x+i[0]) in fifo):
+                        self.path_map[cur_y+i[1]][cur_x+i[0]] += cur_deep
+                        fifo.append((cur_y+i[1], cur_x+i[0]))
+                checked.add(tuple((cur_y, cur_x)))
+            fifo.append((-1, -1))
+            cur_deep+=1
+            if fifo and fifo[0]==(-1, -1):
+                fifo.pop(0)
+
+        for i in range(self.Y):
+            # ~ for j in range(self.X):
+            print(self.path_map[i])
+
+        print("PATH_MAP BUILDED")
+
+        # ~ return set([(y, x) for y in range(len(m)) for x in range(len(m[0]))]) - checked
+    """
 
 
     def expand(self, side=-1, count=1, sides=[]):
@@ -279,6 +310,7 @@ class Goods(object):
             self.goods_map[y][x] = {'item': choice(Items.map_items_list),
                                     'coords': (rnd(0, 4), rnd(0, 4))
                                     }
+
         for i in range(4):
             x = rnd(0, self.map_obj.X-1)
             y = rnd(0, self.map_obj.Y-1)
@@ -289,6 +321,7 @@ class Goods(object):
             self.goods_map[y][x] = {'item': 'detail'+str(i+1),
                                     'coords': (rnd(0, 4), rnd(0, 4))
                                     }
+
         x = rnd(0, self.map_obj.X-1)
         y = rnd(0, self.map_obj.Y-1)
         while self.goods_map[y][x]:
@@ -300,9 +333,9 @@ class Goods(object):
 
 
 class Monsters(object):
-    
+
     monsters_list = ('bird', 'komar', 'kvadrat', 'turtle', 'zombie')
-    
+
     def __init__(self, map_obj, player_obj, N=0):
 
         self.player_obj = player_obj
@@ -327,31 +360,171 @@ class Monsters(object):
                                        }
 
     def move(self, x1, y1, dx=0, dy=0):
-        pass
-        #~ self.monsters_map[y1][x1], self.monsters_map[y1+dy][x1+dx] = self.monsters_map[y1+dy][x1+dx], self.monsters_map[y1][x1]
+        self.monsters_map[y1][x1], self.monsters_map[y1+dy][x1+dx] = self.monsters_map[y1+dy][x1+dx], self.monsters_map[y1][x1]
+        # ~ self.monsters_map[y1+dy][x1+dx].append(self.monsters_map[y1][x1].pop(n))
+
+    def multipathfind(self, x2, y2, coords_list):
+        print("MULTIPATHFINDING")
+        path_map = [[0 for j in range(self.map_obj.X)] for i in range(self.map_obj.Y)]
+
+        checked = set()
+        cur_deep = 1
+
+        fifo = [(y2, x2), (-1, -1)]
+
+        while not(all([i in checked for i in coords_list]) and (y2, x2) in checked):
+            while not(fifo and fifo[0]==(-1, -1)):
+                cur_y, cur_x = fifo.pop(0)
+
+                d = dxy(self.map_obj.m[cur_y][cur_x])
+                for i in d:
+                    if not((cur_y+i[1], cur_x+i[0]) in checked or (cur_y+i[1], cur_x+i[0]) in fifo):
+                        path_map[cur_y+i[1]][cur_x+i[0]] += cur_deep
+                        fifo.append((cur_y+i[1], cur_x+i[0]))
+                checked.add(tuple((cur_y, cur_x)))
+            fifo.append((-1, -1))
+            cur_deep+=1
+            if fifo and fifo[0]==(-1, -1):
+                fifo.pop(0)
+            
+
+        sum_dxy = {}
+        for k in coords_list:
+            sum_dx = 0
+            sum_dy = 0
+            cur_x = k[1]
+            cur_y = k[0]
+
+            for i in range(Const.MONSTERS_SPEED):
+                for j in dxy(self.map_obj.modm[cur_y][cur_x]):
+                    if 0 < path_map[cur_y+j[1]][cur_x+j[0]] < path_map[cur_y][cur_x]:
+                        if not self.monsters_map[cur_y+j[1]][cur_x+j[0]]:
+                            # ~ path.append((cur_y+j[1], cur_x+j[0]))
+                            cur_y += j[1]
+                            cur_x += j[0]
+                        else:
+                            break
+            sum_dx = cur_x - k[1]
+            sum_dy = cur_y - k[0]
+            sum_dxy[k] = (sum_dy, sum_dx)
+            # ~ print("SUM_DXY: ", sum_dxy)
+        print("MULTIPATHFOUND")
+        return sum_dxy
+
+
+    def walk(self, x1, y1, x2, y2):
+        # ~ integrity = check_integrity(self.map_obj.modm, x0=x2, y0=y2)
+# ~
+        # ~ if not((y1, x1) in integrity):
+        path_map = [[0 for j in range(self.map_obj.X)] for i in range(self.map_obj.Y)]
+
+        checked = set()
+        cur_deep = 1
+
+        fifo = [(y2, x2), (-1, -1)]
+
+        while not((y1, x1) in checked and (y2, x2) in checked):
+            while not(fifo and fifo[0]==(-1, -1)):
+                cur_y, cur_x = fifo.pop(0)
+
+                d = dxy(self.map_obj.m[cur_y][cur_x])
+                for i in d:
+                    if not((cur_y+i[1], cur_x+i[0]) in checked or (cur_y+i[1], cur_x+i[0]) in fifo):
+                        path_map[cur_y+i[1]][cur_x+i[0]] += cur_deep
+                        fifo.append((cur_y+i[1], cur_x+i[0]))
+                checked.add(tuple((cur_y, cur_x)))
+            fifo.append((-1, -1))
+            cur_deep+=1
+            if fifo and fifo[0]==(-1, -1):
+                fifo.pop(0)
+
+        # ~ path = []
+
+        sum_dx = 0
+        sum_dy = 0
+        cur_x = x1
+        cur_y = y1
+
+        for i in range(Const.MONSTERS_SPEED):
+            for j in dxy(self.map_obj.modm[cur_y][cur_x]):
+                if path_map[cur_y+j[1]][cur_x+j[0]] <= path_map[cur_y+j[1]][cur_x+j[0]] < path_map[cur_y][cur_x]:
+                    # ~ path.append((cur_y+j[1], cur_x+j[0]))
+                    cur_y += j[1]
+                    cur_x += j[0]
+        sum_dx = cur_x - x1
+        sum_dy = cur_y - y1
+
+        return sum_dx, sum_dy
+
 
     def next_turn(self, obj):
+        print("MONSTERS NEXT TURN")
         X = self.map_obj.X
         Y = self.map_obj.Y
-        
+
         x = self.player_obj.glob_x
         y = self.player_obj.glob_y
-        
+        print("MONSTERS WALKING")
+        integrity = check_integrity(self.map_obj.modm, x0=x, y0=y)
+        # ~ monsters_sawpalayer = [self.monsters_map[i][j] if not(self.monsters_map[i][j]==0) and self.monsters_map[i][j]['sawplayer'] and not(x==j and y==i) for i in range(Y) for j in range(X)]
+        monsters_sawplayer = []
         for i in range(Y):
             for j in range(X):
-                if self.monsters_map[i][j] and self.monsters_map[i][j]['sawplayer'] and not(x==j and y==i):
-                    dx = 0
-                    dy = 0
-                    if rnd(0,1):
-                        dy = (y - i)/abs(y - i)
+                if not(self.monsters_map[i][j]==0) and self.monsters_map[i][j]['sawplayer'] and not(x==j and y==i):
+                    if not (i, j) in integrity:
+                        # ~ monsters_sawplayer.append(self.monsters_map[i][j])
+                        monsters_sawplayer.append((i, j))
                     else:
-                        dx = (x - j)/abs(x - j)
-                    self.move(j, i, dx, dy)
-                    obj.Canvas1.coords(self.monsters_map[i][j]['id'], (j+dx)*180+self.monsters_map[i][j]['coords'][0]*30+15, (i+dy)*180+self.monsters_map[i][j]['coords'][1]*30+30)
+                        sum_dx = 0
+                        sum_dy = 0
+                        y1 = i
+                        x1 = j
 
 
+                        for i in range(1, Const.MONSTERS_SPEED-1):
+                            d = dxy(self.map_obj.modm[y1+sum_dy][x1+sum_dx])
+                            direction = choice(d)
+                            # ~ dirs.append(direction)
+                            sum_dx += direction[0]
+                            sum_dy += direction[1]
 
+                        obj.Canvas1.coords(self.monsters_map[i][j]['tk_id'],
+                            (j+sum_dx)*180+self.monsters_map[i][j]['coords'][0]*30+15,
+                            (i+sum_dy)*180+self.monsters_map[i][j]['coords'][1]*30+30
+                        )
 
+                        self.move(j, i, sum_dx, sum_dy)
+                        # ~ if (j+sum_dx==x and i+sum_dy==y):
+                            # ~ self.player_obj.combatmode = 1
+
+        # ~ print("MONSTERS_SAWPLAYER: ", len(monsters_sawplayer))
+        obj.message("MONSTERS_SAWPLAYER: %s" %(len(monsters_sawplayer), ))
+        multipath = self.multipathfind(x, y, monsters_sawplayer)
+        # ~ print("MULTIPATH: ", multipath)
+
+        for i in range(Y):
+            for j in range(X):
+                if not(self.monsters_map[i][j]==0) and self.monsters_map[i][j]['sawplayer'] and not(x==j and y==i):
+                    if (i, j) in multipath:
+                        # ~ print("SHOULD MOVE")
+                        sum_dx = multipath[(i, j)][1]
+                        sum_dy = multipath[(i, j)][0]
+                        
+
+                        if not(self.monsters_map[i+sum_dy][j+sum_dx]):
+
+                            print("SUM_DX %d, SUM_DY %d" %(sum_dx, sum_dy))
+                            
+                            obj.Canvas1.coords(self.monsters_map[i][j]['tk_id'],
+                                (j+sum_dx)*180+self.monsters_map[i][j]['coords'][0]*30+15,
+                                (i+sum_dy)*180+self.monsters_map[i][j]['coords'][1]*30+30
+                            )
+
+                            self.move(j, i, sum_dx, sum_dy)
+                            # ~ if (j+sum_dx==x and i+sum_dy==y):
+                                # ~ self.player_obj.combatmode = 1
+
+        print("DONE")
 
 class Craft(object):
     @classmethod
@@ -360,8 +533,7 @@ class Craft(object):
             return None
         else:
             return self.recipes[item1][item2]
-        
-    
+
     recipes = {'flashlight': {'cutting torch': 'health pot'},
                'mallet': {'flashlight': 'strength pot'},
                'cutting torch': {'mallet': 'agility pot'},
@@ -384,7 +556,7 @@ class Craft(object):
                'AB': {'O': 'ABO'},
                'ABO': {'Y': 'ABOY'},
                'YOBA': {'ABOY', 'piece of friendship'}
-              }
+               }
 
 
 class Items(object):
@@ -397,7 +569,7 @@ class Items(object):
                   "ABOY", "hand", "detail1", "detail2", "detail3",
                   "detail4"
                   )
-        #"super hammer", "mega hammer", "healing pot", "double ekac")
+        # ~ "super hammer", "mega hammer", "healing pot", "double ekac")
 
     map_items_list = ("mallet", "hammer", "wrench", "health pot",
                       "agility pot", "strength pot", "kettle", "pistol",
@@ -420,11 +592,11 @@ class Items(object):
                         'crowbar': {'attack': 3, 'charges': 2},
                         'crowhammer': {'attack': 8, 'charges': 1},
                         'double crowhammer': {'attack': 16, 'charges': 1},
-                        #~ 'double ekac': {'attack': 40, 'charges': 5},
+                        # ~ 'double ekac': {'attack': 40, 'charges': 5},
                         'hammer': {'attack': 3, 'charges': 2},
                         'double hammer': {'attack': 10, 'charges': 1},
-                        #~ 'super hammer': {'attack': 20, 'charges': 5},
-                        #~ 'mega hammer': {'attack': 20, 'charges': 5},
+                        # ~ 'super hammer': {'attack': 20, 'charges': 5},
+                        # ~ 'mega hammer': {'attack': 20, 'charges': 5},
                         'health pot': {'health': +5, 'charges': 1},
                         'agility pot': {'agility': +5, 'charges': 1},
                         'strength pot': {'strength': +5, 'charges': 1},
